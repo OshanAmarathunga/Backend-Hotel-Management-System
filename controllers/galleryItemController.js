@@ -9,6 +9,7 @@ export function createGalleryItem(req,res){
             message:"Unauthorized!, Please login to create galley item!"
         });
         return;
+        
     }  
 
     if(user.type!="admin"){
