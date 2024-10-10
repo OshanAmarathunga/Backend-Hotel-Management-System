@@ -7,7 +7,7 @@ export function getUsers(req, res) {
     .then((usersList) => {
       if (usersList.length == 0) {
         res.json({
-          list: "No users available!",
+          list: "No users available of backend!",
         });
       } else {
         res.json({
