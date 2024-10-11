@@ -1,4 +1,3 @@
-import { type } from "express/lib/response";
 import mongoose from "mongoose";
 
 const categorySchema=mongoose.Schema({
@@ -7,13 +6,14 @@ const categorySchema=mongoose.Schema({
         required:true
     },
     description:{
-        type:String
+        type:String 
     },
     price:{
-        type:Decimal, 
-        required:true
+        type:Number,  
+        required:true 
     }
+    
 })
 
-const categoryItem=mongoose.model("CategoryItem",categorySchema);
-export default categoryItem;
+const category=mongoose.model("Category",categorySchema);
+export default category;
