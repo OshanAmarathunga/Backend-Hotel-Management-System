@@ -1,5 +1,7 @@
 import category from "../models/Category.js";
+import dotenv from 'dotenv';
 
+dotenv.config();
 
 export function getAllCategories(req,res){
     category.find().then(
