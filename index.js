@@ -5,16 +5,17 @@ import mongoose from "mongoose";
 import galleryItemRouter from "./routes/galleryItemRoute.js";
 import jwt from "jsonwebtoken";
 import categoryRouter from "./routes/CategoryRoute.js";
+import dotenv from 'dotenv';
 
+dotenv.config()
 const app = express();
 app.use(bodyParser.json());
-const connectionString =
-  "mongodb+srv://oshan:1234@cluster0.by9lt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const connectionString =process.env.MONGO_URL;
 
 app.use((req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (token != null) {
-    jwt.verify(token, "secret", (err, decoded) => {
+    jwt.verify(token,process.env.JWT_KEY, (err, decoded) => {
       if (decoded != null) {
         req.user = decoded;
         next();
@@ -40,7 +41,7 @@ mongoose
 
 app.use("/api/users", userRouter);
 app.use("/api/gallery", galleryItemRouter);
-app.use("/api/category",categoryRouter);
+app.use("/api/category",categoryRouter); 
 
 app.listen(5000, (req, res) => {
   console.log("Server is running on port 5000");
