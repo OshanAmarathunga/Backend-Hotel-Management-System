@@ -57,3 +57,51 @@ export function saveCategory(req,res){
 
 
 }
+
+export function deleteCategory(req,res){
+    if(req.user==null){
+        res.json({
+            message:"Unauthorized user for category delete!"
+        })
+    }
+    if(req.user.type !="admin"){
+        res.json({
+            message:"You dont have access to delete category!"
+        })
+    }
+
+    const name=req.params.categoryName
+    category.findOneAndDelete({name:name}).then(
+        (result)=>{
+            if(!result){
+                res.json({
+                    message:`Not found this category - ${name}`
+                 })
+            }else{
+                res.json({
+                    message:`categoet ${name} deleted !`
+                 })
+            }
+        }
+    ).catch((e)=>{
+        res.json({
+            message:e
+        })
+    })
+}
+
+export function getCategoryByName(req,res){
+    const requiredName=req.params.requiredName
+
+    category.findOne({name:requiredName}).then(
+        (result)=>{
+            res.json({
+                result
+            })
+        }
+    ).catch(()=>{
+        res.json({
+            e
+        })
+    })
+}
