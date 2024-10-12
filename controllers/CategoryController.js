@@ -1,7 +1,5 @@
 import category from "../models/Category.js";
-import dotenv from 'dotenv';
 
-dotenv.config();
 
 export function getAllCategories(req,res){
     category.find().then(
@@ -34,7 +32,7 @@ export function saveCategory(req,res){
     }
     console.log(reqUser); 
     
-    if(reqUser.type=="admin"){
+    if(reqUser.type!="admin"){
         res.status(400).json({
             message:"You dont have access to save category!"
         });
