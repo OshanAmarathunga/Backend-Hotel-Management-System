@@ -12,8 +12,9 @@ const roomSchema=mongoose.Schema({
         unique:true
     },
 
-    description:{
+    specialDescription:{
         type:String,
+        default:""
 
     },
 
@@ -21,13 +22,22 @@ const roomSchema=mongoose.Schema({
         type:Number,
         required:true
     },
-    photo:{
+    photo:[
+        {
         type:String
-    },
-    status:{
-        type:String,
+        }
+    ],
+    available:{
+        type:Boolean,
         required:true,
-        default:"Available"
+        default:true
+    },
+    category:{
+        type:String,
+        required:true
+    },
+    notes:{
+        type:String
     }
 
 
