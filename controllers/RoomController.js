@@ -61,7 +61,7 @@ export function getRoomById(req,res){
 }
 
 export function getAllAvailabeRoomList(req,res){
-    Room.find({status:"Available"}).then((AvailableRoomList)=>{
+    Room.find({available:true}).then((AvailableRoomList)=>{
         res.json({
             AvailableRoomList
         })
@@ -78,6 +78,48 @@ export function getRoomByName(req,res){
         res.json({
             room
         })
+    }).catch((e)=>{
+        res.json({
+            e
+        })
+    })
+}
+
+
+export function deleteRoom(req,res){
+    const roomId=req.params.roomId;
+
+    Room.findOneAndDelete({roomId:roomId}).then((result)=>{
+        if(!result){
+            res.json({
+                message:`Room id ${roomId} not found!`
+            })
+        }else{
+            res.json({
+                message:`Room Id ${roomId} deleted !`
+            })
+        }
+    }).catch((e)=>{
+        res.json({
+            e
+        })
+    })
+}
+
+
+export function getRoomByCategory(req,res){
+    const categoryName=req.params.categoryName;
+
+    Room.find({category:categoryName}).then((result)=>{
+        if(!result){
+            res.json({
+                message:"Not Found any room!"
+            })
+        }else{
+            res.json({
+                result
+            })
+        }
     }).catch((e)=>{
         res.json({
             e
