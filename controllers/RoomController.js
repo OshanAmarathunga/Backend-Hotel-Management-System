@@ -126,3 +126,23 @@ export function getRoomByCategory(req,res){
         })
     })
 }
+
+export function updateRoom(req,res){
+    const roomId=req.params.roomId;
+
+    Room.updateOne({roomId:roomId},req.body).then((result)=>{
+        if(!result){
+            res.json({
+                message:`Room id ${roomId} not found for update!`
+            })
+        }else{
+            res.json({
+                message:"Updated!"
+            })
+        }
+    }).catch((e)=>{
+        res.json({
+            e
+        })
+    })
+}
