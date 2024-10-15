@@ -1,23 +1,14 @@
 import GalleryItem from "../models/gallaryItem.js"
+import { isUserValidation } from "../Validation.js";
 
 export function createGalleryItem(req,res){
-    const user=req.user;  
-   
-     
-    if(user==null){
-        res.status(403).json({
-            message:"Unauthorized login!, Please login to create galley item!"
+    const user=req.user; 
+    if (!isUserValidation(req)) {
+        res.json({
+          message: "Invalid login or user unauthorized!",
         });
         return;
-        
-    }  
-
-    if(user.type!="admin"){
-        res.status(403).json({
-            message:"Unauthorized!, Please,login to create galley item!"
-        });
-        return;
-    }
+      }
     
 
     const galleryItem=req.body.item

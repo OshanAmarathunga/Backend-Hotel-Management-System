@@ -1,21 +1,14 @@
 import Room from "../models/Room.js";
+import { isUserValidation } from "../Validation.js";
 
 export function saveRoom(req,res){
     const reqUser=req.user;
-    
-    
-    if(!reqUser){
+    if (!isUserValidation(req)) {
         res.json({
-            message:"Please login to create room!"
+          message: "Invalid login or user unauthorized!",
         });
-        return
-    }
-    if(reqUser.type !="admin"){ 
-        res.json({
-            message:"Only Admin can create room!"
-        });
-        return
-    }  
+        return;
+      }  
 
     const room=req.body;
     const newRoom=new Room(room);

@@ -1,4 +1,5 @@
 import category from "../models/Category.js";
+import { isUserValidation } from "../Validation.js";
 
 export function getAllCategories(req, res) {
   category
@@ -24,17 +25,9 @@ export function getAllCategories(req, res) {
 export function saveCategory(req, res) {
   const reqUser = req.user;
 
-  if (!reqUser) {
-    res.status(400).json({
-      message: "Unauthorized login!",
-    });
-    return;
-  }
-  console.log(reqUser);
-
-  if (reqUser.type != "admin") {
-    res.status(400).json({
-      message: "You dont have access to save category!",
+  if (!isUserValidation(req)) {
+    res.json({
+      message: "Invalid login or user unauthorized!",
     });
     return;
   }
@@ -115,9 +108,9 @@ function isUserValid(req) {
 
 export function updateCategory(req, res) {
 
-  if (!isUserValid(req)) {
+  if (!isUserValidation(req)) {
       res.json({
-        message: "Invalid login!",
+        message: "Invalid login or user unauthorized!",
       });
       return;
     }
