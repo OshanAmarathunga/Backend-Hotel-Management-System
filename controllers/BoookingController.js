@@ -1,4 +1,5 @@
 import Booking from "../models/Booking.js";
+import Room from "../models/Room.js";
 
 export function createBooking(req,res){
     
@@ -42,10 +43,44 @@ export function createBooking(req,res){
             message:"booking number error!"
         })
     })
-
-
 }
 
-// get identify cus or admin=> all booking, cus = >cus booking
-//admin status change of booking
-// can not crash booking dates with room id
+export function getBookingsBasedOnUserRole(req,res){
+    if(req.user==null){
+        res.json({
+            message:"Please login to create booking!"
+        });
+        return
+    }
+
+    if(req.user.type=="customer"){
+        const userEmail=req.user.email;
+
+        Booking.find({email:userEmail}).then((bookings)=>{
+            res.json({
+                bookings
+            })
+        })
+    }else{
+        Booking.find().then((AllBookings)=>{
+            res.json({
+                AllBookings
+            })
+        })
+    }
+}
+
+
+export function updatBooking(req,res){
+    const bookingId=req.params.bookingId;
+    
+    Booking.updateOne({bookingId:bookingId},req.body).then((booking)=>{
+        res.json({
+            booking
+        })
+    }).catch((e)=>{
+        res.json({
+            e
+        })
+    })
+}
