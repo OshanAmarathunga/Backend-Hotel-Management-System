@@ -8,9 +8,13 @@ import categoryRouter from "./routes/CategoryRoute.js";
 import dotenv from 'dotenv';
 import roomRouter from "./routes/RoomRoute.js";
 import bookingRouter from "./routes/BookingRoute.js";
+import morgan from "morgan";
 
-dotenv.config()
+
+ 
+dotenv.config();
 const app = express();
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 const connectionString =process.env.MONGO_URL;
 
@@ -21,7 +25,7 @@ app.use((req, res, next) => {
       if (decoded != null) {
         req.user = decoded;
         next();
-      } else {
+      } else { 
         next();
       }
     });
@@ -35,10 +39,10 @@ app.use((req, res, next) => {
 mongoose
   .connect(connectionString)
   .then(() => {
-    console.log("Connected to databse");
+    console.log("Database connection successfull !");
   })
   .catch((e) => {
-    console.log("Connection error");
+    console.log("Connection Error");
   });
 
 app.use("/api/users", userRouter);
