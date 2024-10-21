@@ -9,11 +9,13 @@ import dotenv from 'dotenv';
 import roomRouter from "./routes/RoomRoute.js";
 import bookingRouter from "./routes/BookingRoute.js";
 import morgan from "morgan";
+import cors from 'cors';
 
 
- 
+
 dotenv.config();
 const app = express();
+app.use(cors()); 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 const connectionString =process.env.MONGO_URL;
