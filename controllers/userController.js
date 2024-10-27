@@ -70,15 +70,20 @@ export function updateUser(req, res) {
 }
 
 export function deleteUser(req, res) {
-  const email = req.body.email;
-  User.deleteOne({ email })
+
+  const email = req.params.email;
+  console.log(email);
+  
+  User.deleteOne({ email:email })
     .then(() => {
-      res.json({
+      res.status(200).json({
         message: `User ${email} deleted!`,
       });
     })
     .catch(() => {
-      message: "Unsuccessfull!";
+      res.status(400).json({
+        message: "Unsuccessfull !",
+      });
     });
 }
 
