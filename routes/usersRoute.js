@@ -8,7 +8,7 @@ userRouter.post('/',saveUser);
 
 userRouter.put('/',updateUser);
 
-userRouter.delete('/',deleteUser);
+userRouter.delete('/:email',deleteUser);
 userRouter.post('/login',loginUser);
 userRouter.get("/get-user",getUser);
 
