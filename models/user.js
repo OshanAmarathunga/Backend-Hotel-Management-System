@@ -35,12 +35,12 @@ const userSchema = mongoose.Schema({
     },
     disabled:{
       type:Boolean,
-      required:true,
+      
       default:false
     },
     emailVerified:{
       type:Boolean,
-      required:true,
+      
       default:false
     }
   });

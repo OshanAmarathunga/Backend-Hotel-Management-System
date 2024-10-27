@@ -11,7 +11,7 @@ export function getAllCategories(req, res) {
         });
       } else {
         res.status(200).json({
-          userList,
+          categories:userList,
         });
       }
     })
@@ -51,12 +51,12 @@ export function saveCategory(req, res) {
 }
 
 export function deleteCategory(req, res) {
-  if (!isUserValid(req)) {
-    res.json({
-      message: "Invalid login!",
-    });
-    return;
-  }
+  // if (!isUserValid(req)) {
+  //   res.json({
+  //     message: "Invalid login!",
+  //   });
+  //   return;
+  // }
 
   const name = req.params.categoryName;
   category
@@ -73,7 +73,7 @@ export function deleteCategory(req, res) {
       }
     })
     .catch((e) => {
-      res.json({
+      res.status(400).json({
         message: e,
       });
     });
