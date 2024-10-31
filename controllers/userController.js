@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import dotenv from "dotenv";
-import admin from "../firebase Config/firebaseConfig.js";
+import admin from "../firebaseConfig/firebaseConfig.js";
 
 dotenv.config();
 
@@ -187,7 +187,7 @@ export async function googleLogin(req, res) {
 
           res.status(200).json({
             message: "Login Success !",
-            user: foundUser,
+            user: foundUser, 
             token: token,
           });
         }
