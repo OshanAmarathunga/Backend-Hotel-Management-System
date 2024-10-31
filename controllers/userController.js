@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import dotenv from "dotenv";
+import admin from "../firebase Config/firebaseConfig.js";
 
 dotenv.config();
 
@@ -29,28 +30,25 @@ export async function saveUser(req, res) {
   const user = req.body;
   const password = user.password;
 
-      try {
-        user.password = await argon2.hash(password);
+  try {
+    user.password = await argon2.hash(password);
 
-        const newUser = new User(user);
-        newUser
-          .save()
-          .then((savedUser) => {
-            res.status(200).json({
-              message: savedUser,
-            });
-          })
-          .catch((e) => {
-            res.status(400).json({
-              message: "Failed",
-              error:e.errorResponse
-            }); 
-          });
-      } catch (e) {
-      }
-    
-
-  }
+    const newUser = new User(user);
+    newUser
+      .save()
+      .then((savedUser) => {
+        res.status(200).json({
+          message: savedUser,
+        });
+      })
+      .catch((e) => {
+        res.status(400).json({
+          message: "Failed",
+          error: e.errorResponse,
+        });
+      });
+  } catch (e) {}
+}
 
 export function updateUser(req, res) {
   const getEmail = req.body.email;
@@ -70,11 +68,10 @@ export function updateUser(req, res) {
 }
 
 export function deleteUser(req, res) {
-
   const email = req.params.email;
   console.log(email);
-  
-  User.deleteOne({ email:email })
+
+  User.deleteOne({ email: email })
     .then(() => {
       res.status(200).json({
         message: `User ${email} deleted!`,
@@ -138,21 +135,71 @@ export function loginUser(req, res) {
     });
 }
 
-export function getUser(req,res){
-  const user=req.user;
-  console.log("Req ->",user);
-   
-  
+export function getUser(req, res) {
+  const user = req.user;
+  console.log("Req ->", user);
 
-  if(user==null){
+  if (user == null) {
     res.json({
-      message:"User not Found!"
-    })
+      message: "User not Found!",
+    });
+  } else {
+    res.json({
+      message: "Found",
+      user,
+    });
   }
-  else{
-    res.json({
-      message:"Found",
-      user
-    })
+}
+
+export async function googleLogin(req, res) {
+  const token = req.params.token;
+  
+  let decodeVal;
+  try {
+    decodeVal = await admin.auth().verifyIdToken(token);
+  } catch (e) {
+    res.status(500).json({
+      message: "Internal Server Error !",
+      error: e.message, 
+    });
+  }
+
+  if (decodeVal) {
+    const email = decodeVal.email;
+    User
+      .findOne({ email: email })
+      .then((foundUser) => {
+        if (foundUser == null) {
+          res.status(404).json({
+            message: "User not found!", 
+          });
+        } else {
+          const payload = {
+            id: foundUser.id,
+            email: foundUser.email,
+            firstName: foundUser.firstName,
+            lastName: foundUser.lastName,
+            type: foundUser.type,
+          };
+          const token = jwt.sign(payload, process.env.JWT_KEY, {
+            expiresIn: "1h",
+          });
+
+          res.status(200).json({
+            message: "Login Success !",
+            user: foundUser,
+            token: token,
+          });
+        }
+      })
+      .catch((e) => {
+        res.json({
+          message: "Error",
+        });
+      });
+  } else {
+    res.status(500).json({
+      message: "Unauthorized Login!",
+    });
   }
 }
