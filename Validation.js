@@ -1,10 +1,12 @@
 export function isUserValidation(req) {
   const reqUser = req.user;
-  if (!reqUser) {
+  console.log(reqUser);
+  
+  if (reqUser==null) {
     return false
   }
 
-  if (reqUser.type != "admin") {
+  if (reqUser.type != "Admin") {
     return false
   }
 
