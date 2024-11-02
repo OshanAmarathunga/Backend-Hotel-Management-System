@@ -12,7 +12,7 @@ const roomSchema=mongoose.Schema({
         unique:true
     },
 
-    specialDescription:{
+    specialDescription:{ 
         type:String,
         default:""
 

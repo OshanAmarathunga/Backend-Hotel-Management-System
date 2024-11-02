@@ -2,9 +2,9 @@ import Room from "../models/Room.js";
 import { isUserValidation } from "../Validation.js";
 
 export function saveRoom(req,res){
-    const reqUser=req.user;
+    
     if (!isUserValidation(req)) {
-        res.json({
+        res.status(200).json({
           message: "Invalid login or user unauthorized!",
         });
         return;
@@ -13,7 +13,7 @@ export function saveRoom(req,res){
     const room=req.body;
     const newRoom=new Room(room);
     newRoom.save().then(
-        (savedRoom)=>{
+        (savedRoom)=>{  
             res.json({ 
                 message:"Room saved!"
             })
