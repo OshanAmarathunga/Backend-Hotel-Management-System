@@ -6,7 +6,7 @@ export function getAllCategories(req, res) {
     .find()
     .then((userList) => {
       if (userList.length == 0) {
-        res.status(400).json({
+        res.status(200).json({
           message: "No categories available!",
         });
       } else {
@@ -23,16 +23,17 @@ export function getAllCategories(req, res) {
 }
 
 export function saveCategory(req, res) {
-  const reqUser = req.user;
-
+  console.log("req : ",req);
+  
   if (!isUserValidation(req)) {
-    res.json({
+    res.status(200).json({
       message: "Invalid login or user unauthorized!",
     });
     return;
   }
 
-  const saveCategory = req.body.item;
+  const saveCategory = req.body;
+  
   const newCategory = new category(saveCategory);
   newCategory
     .save()

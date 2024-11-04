@@ -1,7 +1,7 @@
 import Room from "../models/Room.js";
 import { isUserValidation } from "../Validation.js";
 
-export function saveRoom(req,res){
+export function saveRoom(req,res){  
     
     if (!isUserValidation(req)) {
         res.status(200).json({
@@ -12,9 +12,10 @@ export function saveRoom(req,res){
 
     const room=req.body;
     const newRoom=new Room(room);
+
     newRoom.save().then(
         (savedRoom)=>{  
-            res.json({ 
+            res.status(200).json({ 
                 message:"Room saved!"
             })
         }
