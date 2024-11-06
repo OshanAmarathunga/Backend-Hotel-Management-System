@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import dotenv from "dotenv";
-import admin from "../firebaseConfig/firebaseConfig.js";
+import admin from "../firebaseConfig.js";
 
 dotenv.config();
 
