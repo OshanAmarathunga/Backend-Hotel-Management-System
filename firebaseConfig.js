@@ -13,7 +13,7 @@ const serviceAcount={
   "token_uri": process.env.TOKEN_URI,
   "auth_provider_x509_cert_url": process.env.AUTH_PROVIDER,
   "client_x509_cert_url": process.env.CLIENT,
-  "universe_domain": process.env.UNIVERSE_DOMAIN
+  "universe_domain": process.env.UNIVERSE_DOMAIN 
 }
 
 admin.initializeApp({
