@@ -8,7 +8,7 @@ export function createBooking(req, res) {
     });
     return;
   }
-  if (req.user.type != "customer") {
+  if (req.user.type != "Customer") {
     res.json({
       message: "You are not a customer to create booking",
     });
@@ -57,42 +57,11 @@ export function createBooking(req, res) {
           .catch((e) => {
             res.json({
               message: "booking number error!",
-            });
+            }); 
           });
       }
     })
     .catch((e) => {});
-
-  //   var startingID = 1000;
-  //   Booking.countDocuments()
-  //     .then((count) => {
-  //       const newID = startingID + count + 1;
-  //       const newBooking = new Booking({
-  //         bookingId: newID,
-  //         roomId: req.body.roomId,
-  //         email: req.user.email,
-  //         start: req.body.start,
-  //         end: req.body.end,
-  //       });
-
-  //       newBooking
-  //         .save()
-  //         .then((createdBooking) => {
-  //           res.json({
-  //             createdBooking,
-  //           });
-  //         })
-  //         .catch((e) => {
-  //           res.json({
-  //             e,
-  //           });
-  //         });
-  //     })
-  //     .catch((e) => {
-  //       res.json({
-  //         message: "booking number error!",
-  //       });
-  //     });
 }
 
 export function getBookingsBasedOnUserRole(req, res) {
@@ -102,9 +71,10 @@ export function getBookingsBasedOnUserRole(req, res) {
     });
     return;
   }
+  // req.user.type == "customer"
 
-  if (req.user.type == "customer") {
-    const userEmail = req.user.email;
+  if (true) {
+    const userEmail = req.user.email; 
 
     Booking.find({ email: userEmail }).then((bookings) => {
       res.json({
@@ -134,4 +104,34 @@ export function updatBooking(req, res) {
         e,
       });
     });
+}
+
+export function getAvailableRoomList(req,res){
+  const startDate = req.body.start;
+  const endDate = req.body.end; 
+  const category =req.body.category;
+  
+
+  Booking.find({
+    $or: [{ start: { $lte: endDate }, end: { $gte: startDate } }],
+  }).then((rsp)=>{
+    const rooms=[];
+    for(let i=0;i<rsp.length;i++){
+      rooms.push(rsp[i].roomId)
+    }
+    Room.find({
+      roomId:{
+        $nin:rooms
+      } ,
+      category:category
+
+    }).then((rst)=>{  
+        res.json({
+          rst
+          
+        })
+      
+      
+    })
+  })
 }
