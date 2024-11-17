@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
     type:{
       type:String,
       required:true,
-      default:"customer"
+      default:"Customer"
     },
     whatsapp:{
       type:String,

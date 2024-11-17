@@ -9,9 +9,9 @@ export function createBooking(req, res) {
     return;
   }
   if (req.user.type != "Customer") {
-    res.json({
+    res.status(404).json({
       message: "You are not a customer to create booking",
-    });
+    }); 
     return;
   }
 
@@ -125,7 +125,7 @@ export function getAvailableRoomList(req,res){
       } ,
       category:category
 
-    }).then((rst)=>{  
+    }).then((rst)=>{
         res.json({
           rst
           
