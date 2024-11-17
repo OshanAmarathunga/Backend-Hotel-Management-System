@@ -135,3 +135,27 @@ export function getAvailableRoomList(req,res){
     })
   })
 }
+
+  export function deleteBooking(req,res){
+    const id=req.params.BookingId;
+    
+    Booking.findOneAndDelete({bookingId:id})
+    .then((deletedBooking) => {
+      if (!deletedBooking) {
+        return res.status(404).json({
+          message: "Booking not found",
+        });
+      }
+      res.status(200).json({
+        message: "Booking deleted successfully",
+        data: deletedBooking,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Error deleting booking",
+        
+      });
+    });
+    
+  }
