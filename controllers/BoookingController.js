@@ -157,5 +157,16 @@ export function getAvailableRoomList(req,res){
         
       });
     });
+}
+
+export function getAllBookings(req,res){
+  Booking.find().then((rslt)=>{
+    res.status(200).json({
+      rslt
+    });
+
+  }).catch((e)=>{
+    console.log(e);
     
-  }
+  })
+}
