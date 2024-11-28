@@ -35,7 +35,7 @@ export function getAllFeedbacks(req, res) {
 }
 
 export function getApprovedFeedbacks(req, res) {
-  Feedback.find({ status: "Approved" })
+  Feedback.find({ status: "approved" })
     .then((rsp) => {
       res.status(200).json({
         ApprovedFeedbacks: rsp,
