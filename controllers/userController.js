@@ -3,28 +3,45 @@ import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import dotenv from "dotenv";
 import admin from "../firebaseConfig.js";
+import nodemailer from "nodemailer";
+import Otp from "../models/Otp.js";
 
 dotenv.config();
 
 export function getUsers(req, res) {
+  const pageSize = parseInt(req.body.pageSize) || 3; 
+  const pageNumber = parseInt(req.body.pageNumber) || 1; 
+
+  // Calculate the number of documents to skip
+  const skip = (pageNumber - 1) * pageSize;
+
   User.find()
+    .skip(skip) // Skip the documents for previous pages
+    .limit(pageSize) // Limit the number of documents to the page size
     .then((usersList) => {
-      if (usersList.length == 0) {
-        res.json({
-          list: "No users available of backend!",
-        });
-      } else {
-        res.json({
-          list: usersList,
-        });
-      }
+      User.countDocuments().then((totalCount)=>{
+          res.json({
+            list: usersList,
+            pageInfo: {
+              currentPage: pageNumber,
+              pageSize: pageSize,
+              totalUsers: usersList.length,
+              totalPages:Math.ceil(totalCount/pageSize)
+            },
+            
+          });
+        })
+        
+        
+      
     })
     .catch(() => {
-      res.json({
-        message: "No users found!",
+      res.status(500).json({
+        message: "Error retrieving users!",
       });
     });
 }
+
 
 export async function saveUser(req, res) {
   const user = req.body;
@@ -37,8 +54,18 @@ export async function saveUser(req, res) {
     newUser
       .save()
       .then((savedUser) => {
-        res.status(200).json({
-          message: savedUser,
+        const otp = Math.floor(1000 + Math.random() * 9000);
+
+        const newOtp = new Otp({
+          email: user.email,
+          otp: otp,
+        });
+        newOtp.save().then(() => {
+          sendEmail(user.email, otp);
+
+          res.status(200).json({
+            message: savedUser,
+          });
         });
       })
       .catch((e) => {
@@ -153,25 +180,24 @@ export function getUser(req, res) {
 
 export async function googleLogin(req, res) {
   const token = req.params.token;
-  
+
   let decodeVal;
   try {
     decodeVal = await admin.auth().verifyIdToken(token);
   } catch (e) {
     res.status(500).json({
       message: "Internal Server Error !",
-      error: e.message, 
+      error: e.message,
     });
   }
 
   if (decodeVal) {
     const email = decodeVal.email;
-    User
-      .findOne({ email: email })
+    User.findOne({ email: email })
       .then((foundUser) => {
         if (foundUser == null) {
           res.status(404).json({
-            message: "User not found!", 
+            message: "User not found!",
           });
         } else {
           const payload = {
@@ -187,7 +213,7 @@ export async function googleLogin(req, res) {
 
           res.status(200).json({
             message: "Login Success !",
-            user: foundUser, 
+            user: foundUser,
             token: token,
           });
         }
@@ -204,4 +230,70 @@ export async function googleLogin(req, res) {
   }
 }
 
+export function sendEmail(email, otp) {
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.Email,
+      pass: process.env.PASSWORD
+    },
+    tls: {
+      rejectUnauthorized: false, // Bypass certificate issues (not recommended for production)
+    },
+  });
 
+  const message = {
+    from: "oooshan94@gmail.com",
+    to: email,
+    subject: "Validationg OTP",
+    text: `Your OTP Code is ,${otp}`,
+  };
+
+  transport.sendMail(message, (err, info) => {
+    if (err) {
+      console.log(err);
+      // res.status(500).json({
+      //   message:"email not sent",
+      //   error:err
+      // })
+    } else {
+      console.log("Sent email!");
+
+      // res.status(200).json({
+      //   message:"Email Sent",
+      //   info:info
+      // })
+    }
+  });
+}
+
+export function validateOtp(req,res){
+  const otp=req.body.otp;
+  const email=req.body.email;
+
+  Otp.find({email:email}).sort({date:-1}).then((otpList)=>{
+    if(otpList.length==0){
+      res.json({
+        message:"Otp is invalid"
+      })
+    }else{
+      const latestOtp=otpList[0];
+      if(latestOtp.otp==otp){
+        User.findOneAndUpdate({email:email},{emailVerified:true}).then(()=>{
+          res.json({
+            message:"user email verified successfully"
+          })
+        })
+
+       
+      }else{
+        res.json({
+          message:"Otp is invalid"
+        })
+      }
+    }
+  })
+}
