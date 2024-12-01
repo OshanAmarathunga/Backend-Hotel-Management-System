@@ -14,7 +14,7 @@ import User from "../models/user.js";
 const userRouter = express.Router();
 
 userRouter.post("/", getUsers);
-userRouter.post("/", saveUser);
+userRouter.post("/saveuser", saveUser);
 userRouter.put("/", updateUser);
 userRouter.delete("/:email", deleteUser);
 userRouter.post("/login", loginUser);

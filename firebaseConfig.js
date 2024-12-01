@@ -16,14 +16,7 @@ const requiredEnvVariables = [
   "CLIENT",
   "UNIVERSE_DOMAIN",
 ];
-console.log(process.env.PRIVATE_KEY.replace(/\\n/g, '\n'));
 
-
-requiredEnvVariables.forEach((key) => {
-  if (!process.env[key]) {
-    throw new Error(`Environment variable ${key} is missing`);
-  }
-});
 
 const serviceAccount = {
   type: process.env.TYPE,
@@ -38,6 +31,8 @@ const serviceAccount = {
   client_x509_cert_url: process.env.CLIENT,
   universe_domain: process.env.UNIVERSE_DOMAIN,
 };
+console.log("Processed PRIVATE_KEY:", serviceAccount.private_key);
+
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
