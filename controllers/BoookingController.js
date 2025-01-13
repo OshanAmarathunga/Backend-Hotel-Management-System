@@ -11,7 +11,7 @@ export function createBooking(req, res) {
   if (req.user.type != "Customer") {
     res.status(404).json({
       message: "You are not a customer to create booking",
-    }); 
+    });
     return;
   }
 
@@ -30,9 +30,11 @@ export function createBooking(req, res) {
         });
       } else {
         var startingID = 1000;
-        Booking.countDocuments()
+        Booking.findOne().sort({_id:-1})
           .then((count) => {
-            const newID = startingID + count + 1;
+            const newID = startingID + count.bookingId + 1;
+            console.log("newID", newID);
+
             const newBooking = new Booking({
               bookingId: newID,
               roomId: req.body.roomId,
@@ -57,7 +59,7 @@ export function createBooking(req, res) {
           .catch((e) => {
             res.json({
               message: "booking number error!",
-            }); 
+            });
           });
       }
     })
@@ -74,7 +76,7 @@ export function getBookingsBasedOnUserRole(req, res) {
   // req.user.type == "customer"
 
   if (true) {
-    const userEmail = req.user.email; 
+    const userEmail = req.user.email;
 
     Booking.find({ email: userEmail }).then((bookings) => {
       res.json({
@@ -106,40 +108,35 @@ export function updatBooking(req, res) {
     });
 }
 
-export function getAvailableRoomList(req,res){
+export function getAvailableRoomList(req, res) {
   const startDate = req.body.start;
-  const endDate = req.body.end; 
-  const category =req.body.category;
-  
+  const endDate = req.body.end;
+  const category = req.body.category;
 
   Booking.find({
     $or: [{ start: { $lte: endDate }, end: { $gte: startDate } }],
-  }).then((rsp)=>{
-    const rooms=[];
-    for(let i=0;i<rsp.length;i++){
-      rooms.push(rsp[i].roomId)
+  }).then((rsp) => {
+    const rooms = [];
+    for (let i = 0; i < rsp.length; i++) {
+      rooms.push(rsp[i].roomId);
     }
     Room.find({
-      roomId:{
-        $nin:rooms
-      } ,
-      category:category
-
-    }).then((rst)=>{
-        res.json({
-          rst
-          
-        })
-      
-      
-    })
-  })
+      roomId: {
+        $nin: rooms,
+      },
+      category: category,
+    }).then((rst) => {
+      res.json({
+        rst,
+      });
+    });
+  });
 }
 
-  export function deleteBooking(req,res){
-    const id=req.params.BookingId;
-    
-    Booking.findOneAndDelete({bookingId:id})
+export function deleteBooking(req, res) {
+  const id = req.params.BookingId;
+
+  Booking.findOneAndDelete({ bookingId: id })
     .then((deletedBooking) => {
       if (!deletedBooking) {
         return res.status(404).json({
@@ -154,19 +151,18 @@ export function getAvailableRoomList(req,res){
     .catch((error) => {
       res.status(500).json({
         message: "Error deleting booking",
-        
       });
     });
 }
 
-export function getAllBookings(req,res){
-  Booking.find().then((rslt)=>{
-    res.status(200).json({
-      rslt
+export function getAllBookings(req, res) {
+  Booking.find()
+    .then((rslt) => {
+      res.status(200).json({
+        rslt,
+      });
+    })
+    .catch((e) => {
+      console.log(e);
     });
-
-  }).catch((e)=>{
-    console.log(e);
-    
-  })
 }
